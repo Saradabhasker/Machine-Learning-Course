@@ -1,0 +1,28 @@
+## On 40% Test Data
+
+hat <- predict(trainingModel, DProbeCS)
+confusionMatrix(hat, DProbeCS[, classe])
+
+varImp(trainingModel)
+
+## Validate on additional Test data
+load(file="trainingModel.RData", verbose=TRUE)
+
+
+
+DTestCS <- predict(preProc, DTest[, predCandidates, with=FALSE])
+hat <- predict(trainingModel, DTestCS)
+DTest <- cbind(hat , DTest)
+subset(DTest, select=names(DTest)[grep("belt|[^(fore)]arm|dumbbell|forearm", names(DTest), invert=TRUE)])
+
+
+
+pml_write_files = function(x){
+  n = length(x)
+  path <- "predictionAssignment_files/answers"
+  for(i in 1:n){
+    filename = paste0("problem_id_",i,".txt")
+    write.table(x[i],file=file.path(path, filename),quote=FALSE,row.names=FALSE,col.names=FALSE)
+  }
+}
+pml_write_files(hat)
