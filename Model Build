@@ -1,0 +1,20 @@
+
+library(parallel)
+library(doParallel)
+
+cl <- makeCluster(detectCores() - 1)
+registerDoParallel(cl)
+
+
+ctrl <- trainControl(classProbs=TRUE,
+savePredictions=TRUE,
+allowParallel=TRUE)
+
+method <- "rf"
+system.time(trainingModel <- train(classe ~ ., data=DTrainCS, method=method))
+
+stopCluster(cl)
+trainingModel
+
+hat <- predict(trainingModel, DTrainCS)
+confusionMatrix(hat, DTrain[, classe])
